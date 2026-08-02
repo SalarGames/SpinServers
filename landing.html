@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spin World Fight — Online Battle</title>
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='b' cx='35%25' cy='30%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%23e3fffb'/%3E%3Cstop offset='45%25' stop-color='%2300e5d6'/%3E%3Cstop offset='100%25' stop-color='%23046b64'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='url(%23b)'/%3E%3Ccircle cx='32' cy='24' r='9' fill='%23fff' opacity='0.5'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep: #0d0b24;
+    --bg-arena: #16123a;
+    --gold: #ffc93c;
+    --pink: #ff3d7f;
+    --cyan: #00e5d6;
+    --ink: #f5f3ff;
+    --muted: #9b93c2;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:
+      radial-gradient(ellipse 120% 80% at 50% -10%, rgba(255,61,127,0.25), transparent 60%),
+      radial-gradient(ellipse 100% 60% at 85% 15%, rgba(0,229,214,0.12), transparent 55%),
+      var(--bg-deep);
+    color: var(--ink);
+    font-family: 'Manrope', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition-duration: 0.001s !important; }
+  }
+
+  /* ---------- Background floating debris ---------- */
+  .bg-orbit{
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+  .mote{
+    position:absolute; border-radius:50%; filter: blur(0.5px);
+    opacity: 0.55;
+    animation: floaty 14s ease-in-out infinite;
+  }
+  @keyframes floaty{
+    0%,100%{ transform: translateY(0) translateX(0); }
+    50%{ transform: translateY(-30px) translateX(15px); }
+  }
+
+  /* ---------- Nav ---------- */
+  header{
+    position: relative; z-index: 5;
+    display:flex; align-items:center; justify-content:space-between;
+    max-width: 1180px; margin: 0 auto; padding: 28px 24px 0;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Anton', sans-serif; letter-spacing: 0.04em;
+    font-size: 1.15rem; color: var(--ink);
+  }
+  .brand-dot{
+    width:12px; height:12px; border-radius:50%;
+    background: conic-gradient(from 0deg, var(--pink), var(--gold), var(--cyan), var(--pink));
+    animation: spin 3s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  /* ---------- Hero ---------- */
+  main{ position:relative; z-index:2; }
+  .hero{
+    max-width: 1180px; margin: 0 auto; padding: 60px 24px 20px;
+    display:grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items:center;
+  }
+  @media (max-width: 900px){
+    .hero{ grid-template-columns: 1fr; text-align:center; padding-top: 30px; }
+    .hero-copy{ order:2; }
+    .arena-wrap{ order:1; }
+  }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size: 0.78rem; font-weight:700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(255,201,60,0.35);
+    background: rgba(255,201,60,0.08);
+    padding: 7px 14px; border-radius: 999px;
+    margin-bottom: 22px;
+    animation: fadeUp 0.7s ease both;
+  }
+  .eyebrow::before{ content:"⚔"; font-size:0.85em; }
+
+  h1{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    text-transform: uppercase;
+    line-height: 0.94;
+    letter-spacing: 0.01em;
+    font-size: clamp(2.6rem, 6vw, 4.6rem);
+    animation: fadeUp 0.7s ease 0.05s both;
+  }
+  h1 .line2{
+    background: linear-gradient(90deg, var(--pink), var(--gold) 55%, var(--cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .sub{
+    margin-top: 20px;
+    font-size: 1.08rem;
+    color: var(--muted);
+    max-width: 46ch;
+    line-height: 1.6;
+    animation: fadeUp 0.7s ease 0.12s both;
+  }
+  @media (max-width:900px){ .sub{ margin-inline:auto; } }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform: translateY(16px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  /* ---------- Store buttons ---------- */
+  .stores{
+    display:flex; gap:14px; margin-top: 34px; flex-wrap:wrap;
+    animation: fadeUp 0.7s ease 0.2s both;
+  }
+  @media (max-width:900px){ .stores{ justify-content:center; } }
+
+  .store-btn{
+    display:flex; align-items:center; gap:12px;
+    padding: 13px 22px;
+    border-radius: 14px;
+    text-decoration:none;
+    color: var(--ink);
+    border: 1px solid rgba(245,243,255,0.14);
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .store-btn:hover{
+    transform: translateY(-3px);
+    border-color: rgba(255,201,60,0.5);
+    box-shadow: 0 12px 30px -10px rgba(255,61,127,0.45);
+  }
+  .store-btn::after{
+    content:""; position:absolute; inset:0;
+    background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.18) 35%, transparent 50%);
+    transform: translateX(-120%);
+  }
+  .store-btn:hover::after{ transform: translateX(120%); transition: transform 0.9s ease; }
+  .store-btn svg{ width:26px; height:26px; flex-shrink:0; }
+  .store-text{ display:flex; flex-direction:column; line-height:1.15; }
+  .store-text .small{ font-size:0.68rem; color: var(--muted); letter-spacing:0.04em; }
+  .store-text .big{ font-size:1.02rem; font-weight:700; }
+
+  /* ---------- Arena visual (signature element) ---------- */
+  .arena-wrap{
+    position:relative; display:flex; align-items:center; justify-content:center;
+    animation: fadeUp 0.9s ease 0.1s both;
+  }
+  .arena-glow{
+    position:absolute; width:70%; aspect-ratio:1; border-radius:50%;
+    background: radial-gradient(circle, rgba(255,61,127,0.35), transparent 65%);
+    filter: blur(20px);
+    animation: pulse 3.4s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:0.7; transform:scale(1);} 50%{ opacity:1; transform:scale(1.08);} }
+
+  .arena-svg{ width: min(440px, 92%); height:auto; position:relative; z-index:2; }
+
+  .spark{
+    animation: sparkPulse 1.35s ease-in-out infinite;
+  }
+  @keyframes sparkPulse{ 0%,100%{ opacity:0; r:2; } 50%{ opacity:1; r:5; } }
+
+  /* ---------- Modes strip ---------- */
+  .modes{
+    max-width: 1180px; margin: 90px auto 0; padding: 0 24px;
+  }
+  .modes-head{
+    display:flex; align-items:baseline; justify-content:space-between; gap: 16px; flex-wrap:wrap;
+    margin-bottom: 30px;
+  }
+  .modes-head h2{
+    font-family:'Anton', sans-serif; font-weight:400; text-transform:uppercase;
+    font-size: clamp(1.4rem, 3vw, 2rem); letter-spacing:0.01em;
+  }
+  .modes-head p{ color: var(--muted); font-size:0.95rem; max-width: 40ch; }
+
+  .mode-grid{
+    display:grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  }
+  @media (max-width: 900px){ .mode-grid{ grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 520px){ .mode-grid{ grid-template-columns: 1fr; } }
+
+  .mode-card{
+    background: linear-gradient(160deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+    border: 1px solid rgba(245,243,255,0.09);
+    border-radius: 18px;
+    padding: 22px 20px;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+  .mode-card:hover{ transform: translateY(-6px); border-color: rgba(0,229,214,0.4); }
+  .mode-card .ico{ font-size:1.5rem; margin-bottom:14px; display:block; }
+  .mode-card h3{ font-size:1rem; margin-bottom:8px; }
+  .mode-card p{ font-size:0.85rem; color: var(--muted); line-height:1.5; }
+
+  /* ---------- Bottom CTA ---------- */
+  .cta-final{
+    max-width: 1180px; margin: 100px auto 60px; padding: 0 24px;
+    text-align:center;
+  }
+  .cta-final h2{
+    font-family:'Anton', sans-serif; font-weight:400; text-transform:uppercase;
+    font-size: clamp(1.8rem, 4.4vw, 3rem); margin-bottom: 14px;
+  }
+  .cta-final p{ color: var(--muted); margin-bottom: 30px; }
+  .cta-final .stores{ justify-content:center; }
+
+  footer{
+    border-top: 1px solid rgba(245,243,255,0.08);
+    padding: 26px 24px 40px;
+    text-align:center;
+    color: var(--muted);
+    font-size: 0.82rem;
+    position: relative; z-index:2;
+  }
+  footer a{ color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+  footer a:hover{ color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="bg-orbit" id="bgOrbit"></div>
+
+<header>
+  <div class="brand"><span class="brand-dot"></span> SPIN WORLD FIGHT</div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">World Fight Spin Battles</span>
+      <h1>Knock them<br><span class="line2">out of the bowl.</span></h1>
+      <p class="sub">Groups. Knockouts. 1v1, online, or with a friend. Spin your ball, smash the rival, be the last one standing in the arena.</p>
+
+      <div class="stores">
+        <a class="store-btn" href="#" id="googlePlayBtn" aria-label="Get it on Google Play">
+          <svg viewBox="0 0 512 512" fill="none"><path d="M99 20 320 240 99 460c-14-8-24-23-24-41V61c0-18 10-33 24-41z" fill="#00E5D6"/><path d="M320 240 99 20c4-2 8-3 13-3 8 0 16 3 23 8l208 120-23 13z" fill="#FFC93C"/><path d="M363 208 256 152 133 20 343 195l20 13z" fill="#FF3D7F"/><path d="M133 460 256 328l107-56-20 13-210 175z" fill="#FF3D7F"/><path d="M363 272 456 224c22 12 22 40 0 52l-93 48-56-52 56-52z" fill="#00E5D6"/></svg>
+          <span class="store-text"><span class="small">GET IT ON</span><span class="big">Google Play</span></span>
+        </a>
+        <a class="store-btn" href="#" id="appStoreBtn" aria-label="Download on the App Store">
+          <svg viewBox="0 0 384 512" fill="currentColor"><path d="M318 268c-1-51 42-76 44-77-24-35-61-40-74-40-31-3-61 19-77 19-16 0-40-18-66-18-34 1-65 20-83 51-35 61-9 152 25 202 17 24 37 51 63 50 25-1 35-16 66-16 31 0 40 16 66 16 27-1 45-25 62-49 20-28 28-55 28-56-1-1-53-20-54-80z"/><path d="M269 108c14-17 23-40 21-63-20 1-45 14-60 31-13 15-24 39-21 62 22 2 45-11 60-30z"/></svg>
+          <span class="store-text"><span class="small">DOWNLOAD ON THE</span><span class="big">App Store</span></span>
+        </a>
+      </div>
+    </div>
+
+    <div class="arena-wrap">
+      <div class="arena-glow"></div>
+      <svg class="arena-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="bowlGrad" cx="50%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#241f52"/>
+            <stop offset="100%" stop-color="#120f30"/>
+          </radialGradient>
+          <linearGradient id="rimGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffc93c"/>
+            <stop offset="100%" stop-color="#ff3d7f"/>
+          </linearGradient>
+          <radialGradient id="ballPink" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#ffe3ee"/>
+            <stop offset="45%" stop-color="#ff3d7f"/>
+            <stop offset="100%" stop-color="#9c1650"/>
+          </radialGradient>
+          <radialGradient id="ballCyan" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#e3fffb"/>
+            <stop offset="45%" stop-color="#00e5d6"/>
+            <stop offset="100%" stop-color="#046b64"/>
+          </radialGradient>
+        </defs>
+
+        <ellipse cx="200" cy="330" rx="150" ry="26" fill="#000" opacity="0.35"/>
+        <path d="M50 210 a150 150 0 0 0 300 0 a150 170 0 0 1 -300 0 z" fill="url(#bowlGrad)"/>
+        <ellipse cx="200" cy="210" rx="150" ry="60" fill="none" stroke="url(#rimGrad)" stroke-width="6"/>
+        <ellipse cx="200" cy="215" rx="130" ry="48" fill="#0a0821" opacity="0.6"/>
+
+        <g>
+          <animateTransform attributeName="transform" type="rotate" from="0 200 215" to="360 200 215" dur="2.6s" repeatCount="indefinite"/>
+          <circle cx="120" cy="215" r="22" fill="url(#ballPink)"/>
+          <circle cx="120" cy="207" r="7" fill="#fff" opacity="0.5"/>
+        </g>
+        <g>
+          <animateTransform attributeName="transform" type="rotate" from="180 200 215" to="540 200 215" dur="2.6s" repeatCount="indefinite"/>
+          <circle cx="280" cy="215" r="22" fill="url(#ballCyan)"/>
+          <circle cx="280" cy="207" r="7" fill="#fff" opacity="0.5"/>
+        </g>
+
+        <g fill="#fff">
+          <circle class="spark" cx="200" cy="215" r="3" style="animation-delay:0s"/>
+          <circle class="spark" cx="212" cy="205" r="3" style="animation-delay:0.3s"/>
+          <circle class="spark" cx="188" cy="225" r="3" style="animation-delay:0.6s"/>
+          <circle class="spark" cx="205" cy="230" r="3" style="animation-delay:0.9s"/>
+        </g>
+
+        <ellipse cx="200" cy="210" rx="150" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="14"/>
+      </svg>
+    </div>
+  </section>
+
+  <section class="modes">
+    <div class="modes-head">
+      <h2>Pick your battle</h2>
+      <p>Every match, one bowl, one winner.</p>
+    </div>
+    <div class="mode-grid">
+      <div class="mode-card">
+        <span class="ico">🏆</span>
+        <h3>World Fight</h3>
+        <p>Groups then knockouts. Climb the bracket to lift the trophy.</p>
+      </div>
+      <div class="mode-card">
+        <span class="ico">🤖</span>
+        <h3>Solo</h3>
+        <p>One player, one bowl. Practice your spin against the AI.</p>
+      </div>
+      <div class="mode-card">
+        <span class="ico">👥</span>
+        <h3>Local 1v1</h3>
+        <p>Pass the phone. Same screen, no mercy.</p>
+      </div>
+      <div class="mode-card">
+        <span class="ico">🌐</span>
+        <h3>Online</h3>
+        <p>Random rivals or challenge a friend, live, anywhere.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-final">
+    <h2>Your ball. Your bowl.<br>Your world.</h2>
+    <p>Free to play. Fair prices. Zero pay-to-win nonsense.</p>
+    <div class="stores">
+      <a class="store-btn" href="#" onclick="document.getElementById('googlePlayBtn').click(); return false;" aria-label="Get it on Google Play">
+        <svg viewBox="0 0 512 512" fill="none"><path d="M99 20 320 240 99 460c-14-8-24-23-24-41V61c0-18 10-33 24-41z" fill="#00E5D6"/><path d="M320 240 99 20c4-2 8-3 13-3 8 0 16 3 23 8l208 120-23 13z" fill="#FFC93C"/><path d="M363 208 256 152 133 20 343 195l20 13z" fill="#FF3D7F"/><path d="M133 460 256 328l107-56-20 13-210 175z" fill="#FF3D7F"/><path d="M363 272 456 224c22 12 22 40 0 52l-93 48-56-52 56-52z" fill="#00E5D6"/></svg>
+        <span class="store-text"><span class="small">GET IT ON</span><span class="big">Google Play</span></span>
+      </a>
+      <a class="store-btn" href="#" onclick="document.getElementById('appStoreBtn').click(); return false;" aria-label="Download on the App Store">
+        <svg viewBox="0 0 384 512" fill="currentColor"><path d="M318 268c-1-51 42-76 44-77-24-35-61-40-74-40-31-3-61 19-77 19-16 0-40-18-66-18-34 1-65 20-83 51-35 61-9 152 25 202 17 24 37 51 63 50 25-1 35-16 66-16 31 0 40 16 66 16 27-1 45-25 62-49 20-28 28-55 28-56-1-1-53-20-54-80z"/><path d="M269 108c14-17 23-40 21-63-20 1-45 14-60 31-13 15-24 39-21 62 22 2 45-11 60-30z"/></svg>
+        <span class="store-text"><span class="small">DOWNLOAD ON THE</span><span class="big">App Store</span></span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Spin World Fight · Published by Salar Games · <a href="./index.html">Privacy Policy</a>
+</footer>
+
+<script>
+  // Store links — replace these two URLs once the app is live
+  const GOOGLE_PLAY_URL = "https://play.google.com/store/apps/details?id=YOUR_PACKAGE_NAME";
+  const APP_STORE_URL   = "https://apps.apple.com/app/idYOUR_APP_ID";
+
+  document.getElementById('googlePlayBtn').href = GOOGLE_PLAY_URL;
+  document.getElementById('appStoreBtn').href = APP_STORE_URL;
+  document.getElementById('googlePlayBtn').target = "_blank";
+  document.getElementById('appStoreBtn').target = "_blank";
+
+  // Floating background motes matching palette
+  const colors = ['#ff3d7f','#ffc93c','#00e5d6'];
+  const orbit = document.getElementById('bgOrbit');
+  for(let i=0;i<18;i++){
+    const m = document.createElement('div');
+    m.className = 'mote';
+    const size = Math.random()*5+2;
+    m.style.width = size+'px';
+    m.style.height = size+'px';
+    m.style.left = Math.random()*100+'%';
+    m.style.top = Math.random()*100+'%';
+    m.style.background = colors[i % colors.length];
+    m.style.animationDelay = (Math.random()*6)+'s';
+    m.style.animationDuration = (10+Math.random()*8)+'s';
+    orbit.appendChild(m);
+  }
+</script>
+
+</body>
+</html>
