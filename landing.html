@@ -269,14 +269,6 @@
       <div class="arena-glow"></div>
       <svg class="arena-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="bowlGrad" cx="50%" cy="35%" r="65%">
-            <stop offset="0%" stop-color="#241f52"/>
-            <stop offset="100%" stop-color="#120f30"/>
-          </radialGradient>
-          <linearGradient id="rimGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#ffc93c"/>
-            <stop offset="100%" stop-color="#ff3d7f"/>
-          </linearGradient>
           <radialGradient id="ballPink" cx="35%" cy="30%" r="70%">
             <stop offset="0%" stop-color="#ffe3ee"/>
             <stop offset="45%" stop-color="#ff3d7f"/>
@@ -287,32 +279,78 @@
             <stop offset="45%" stop-color="#00e5d6"/>
             <stop offset="100%" stop-color="#046b64"/>
           </radialGradient>
+          <radialGradient id="burstGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+            <stop offset="40%" stop-color="#ffc93c" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#ffc93c" stop-opacity="0"/>
+          </radialGradient>
         </defs>
 
-        <ellipse cx="200" cy="330" rx="150" ry="26" fill="#000" opacity="0.35"/>
-        <path d="M50 210 a150 150 0 0 0 300 0 a150 170 0 0 1 -300 0 z" fill="url(#bowlGrad)"/>
-        <ellipse cx="200" cy="210" rx="150" ry="60" fill="none" stroke="url(#rimGrad)" stroke-width="6"/>
-        <ellipse cx="200" cy="215" rx="130" ry="48" fill="#0a0821" opacity="0.6"/>
+        <ellipse cx="200" cy="330" rx="140" ry="22" fill="#000" opacity="0.3"/>
 
-        <g>
-          <animateTransform attributeName="transform" type="rotate" from="0 200 215" to="360 200 215" dur="2.6s" repeatCount="indefinite"/>
-          <circle cx="120" cy="215" r="22" fill="url(#ballPink)"/>
-          <circle cx="120" cy="207" r="7" fill="#fff" opacity="0.5"/>
-        </g>
-        <g>
-          <animateTransform attributeName="transform" type="rotate" from="180 200 215" to="540 200 215" dur="2.6s" repeatCount="indefinite"/>
-          <circle cx="280" cy="215" r="22" fill="url(#ballCyan)"/>
-          <circle cx="280" cy="207" r="7" fill="#fff" opacity="0.5"/>
+        <!-- impact burst -->
+        <circle cx="200" cy="210" r="20" fill="url(#burstGrad)">
+          <animate attributeName="r" values="20;95;20" dur="1.3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;0" dur="1.3s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- impact rays -->
+        <g stroke="#ffc93c" stroke-width="4" stroke-linecap="round">
+          <line x1="200" y1="210" x2="200" y2="148">
+            <animate attributeName="opacity" values="0;1;0" dur="1.3s" repeatCount="indefinite"/>
+          </line>
+          <line x1="200" y1="210" x2="200" y2="272">
+            <animate attributeName="opacity" values="0;1;0" dur="1.3s" begin="0.05s" repeatCount="indefinite"/>
+          </line>
+          <line x1="200" y1="210" x2="248" y2="178">
+            <animate attributeName="opacity" values="0;1;0" dur="1.3s" begin="0.1s" repeatCount="indefinite"/>
+          </line>
+          <line x1="200" y1="210" x2="152" y2="178">
+            <animate attributeName="opacity" values="0;1;0" dur="1.3s" begin="0.1s" repeatCount="indefinite"/>
+          </line>
+          <line x1="200" y1="210" x2="252" y2="238">
+            <animate attributeName="opacity" values="0;1;0" dur="1.3s" begin="0.15s" repeatCount="indefinite"/>
+          </line>
+          <line x1="200" y1="210" x2="148" y2="238">
+            <animate attributeName="opacity" values="0;1;0" dur="1.3s" begin="0.15s" repeatCount="indefinite"/>
+          </line>
         </g>
 
+        <!-- Left ball (pink, angry) -->
+        <g>
+          <animateTransform attributeName="transform" type="translate" values="-38,0; 0,0; -38,0" dur="1.3s" repeatCount="indefinite"/>
+          <g transform="translate(150,210)">
+            <circle r="46" fill="url(#ballPink)"/>
+            <circle cx="-14" cy="-16" r="14" fill="#fff" opacity="0.35"/>
+            <path d="M-30,-12 L-8,-4" stroke="#3a0a1e" stroke-width="5" stroke-linecap="round"/>
+            <path d="M30,-12 L8,-4" stroke="#3a0a1e" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="-14" cy="2" r="6" fill="#1a0510"/>
+            <circle cx="14" cy="2" r="6" fill="#1a0510"/>
+            <path d="M-18,20 Q0,36 18,20 Q0,26 -18,20 Z" fill="#3a0a1e"/>
+          </g>
+        </g>
+
+        <!-- Right ball (cyan, angry) -->
+        <g>
+          <animateTransform attributeName="transform" type="translate" values="38,0; 0,0; 38,0" dur="1.3s" repeatCount="indefinite"/>
+          <g transform="translate(250,210)">
+            <circle r="46" fill="url(#ballCyan)"/>
+            <circle cx="-14" cy="-16" r="14" fill="#fff" opacity="0.35"/>
+            <path d="M-30,-4 L-8,-12" stroke="#013b37" stroke-width="5" stroke-linecap="round"/>
+            <path d="M30,-4 L8,-12" stroke="#013b37" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="-14" cy="2" r="6" fill="#012622"/>
+            <circle cx="14" cy="2" r="6" fill="#012622"/>
+            <path d="M-18,20 Q0,36 18,20 Q0,26 -18,20 Z" fill="#012622"/>
+          </g>
+        </g>
+
+        <!-- sparks -->
         <g fill="#fff">
-          <circle class="spark" cx="200" cy="215" r="3" style="animation-delay:0s"/>
-          <circle class="spark" cx="212" cy="205" r="3" style="animation-delay:0.3s"/>
-          <circle class="spark" cx="188" cy="225" r="3" style="animation-delay:0.6s"/>
-          <circle class="spark" cx="205" cy="230" r="3" style="animation-delay:0.9s"/>
+          <circle class="spark" cx="200" cy="192" r="3" style="animation-delay:0s"/>
+          <circle class="spark" cx="218" cy="212" r="3" style="animation-delay:0.3s"/>
+          <circle class="spark" cx="182" cy="228" r="3" style="animation-delay:0.6s"/>
+          <circle class="spark" cx="205" cy="240" r="3" style="animation-delay:0.9s"/>
         </g>
-
-        <ellipse cx="200" cy="210" rx="150" ry="60" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="14"/>
       </svg>
     </div>
   </section>
