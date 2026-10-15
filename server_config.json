@@ -1,7 +1,7 @@
 {
   "regions": [
-    { "name": "USA",    "tcp_host": "127.0.0.1", "tcp_port": 7000, "online": true },
-    { "name": "Europe", "tcp_host": "127.0.0.1", "tcp_port": 7000, "online": true },
-    { "name": "Asia",   "tcp_host": "127.0.0.1", "tcp_port": 7000, "online": true }
+    { "name": "USA",    "tcp_host": "23.145.48.106", "tcp_port": 7000, "online": true },
+    { "name": "Europe", "tcp_host": "142.251.20.139", "tcp_port": 7000, "online": true },
+    { "name": "Asia",   "tcp_host": "142.251.20.139", "tcp_port": 7000, "online": true }
   ]
 }
