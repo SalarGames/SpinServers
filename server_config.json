@@ -1,9 +1,9 @@
 {
   "regions": [
-    { "name": "USA",    "tcp_host": "23.145.48.106", "tcp_port": 7000, "online": true },
-    { "name": "Europe", "tcp_host": "1.2.3.4", "tcp_port": 7000, "online": true },
-    { "name": "Asia East",   "tcp_host": "1.2.3.4", "tcp_port": 7000, "online": true },
-    { "name": "Asia West",   "tcp_host": "1.2.3.4", "tcp_port": 7000, "online": true },
-    { "name": "Middle East",   "tcp_host": "1.2.3.4", "tcp_port": 7000, "online": true }
+    { "name": "America",     "short": "America",  "tcp_host": "23.145.48.106", "tcp_port": 7000, "online": true },
+    { "name": "Europe",      "short": "Europe",   "tcp_host": "1.2.3.4",       "tcp_port": 7000, "online": false },
+    { "name": "Asia East",   "short": "Asia E",   "tcp_host": "1.2.3.4",       "tcp_port": 7000, "online": false },
+    { "name": "Asia West",   "short": "Asia W",   "tcp_host": "1.2.3.4",       "tcp_port": 7000, "online": false },
+    { "name": "Middle East", "short": "Middle E", "tcp_host": "1.2.3.4",       "tcp_port": 7000, "online": false }
   ]
 }
