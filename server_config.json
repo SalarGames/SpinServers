@@ -4,6 +4,6 @@
     { "name": "Europe",      "short": "Europe",   "tcp_host": "1.2.3.4",       "tcp_port": 7000, "online": false },
     { "name": "Asia East",   "short": "Asia E",   "tcp_host": "1.2.3.4",       "tcp_port": 7000, "online": false },
     { "name": "Asia West",   "short": "Asia W",   "tcp_host": "1.2.3.4",       "tcp_port": 7000, "online": false },
-    { "name": "Middle East", "short": "Middle E", "tcp_host": "1.2.3.4",       "tcp_port": 7000, "online": false }
+    { "name": "Middle East", "short": "Middle E", "tcp_host": "185.231.180.20",       "tcp_port": 7000, "online": true }
   ]
 }
